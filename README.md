@@ -1,6 +1,6 @@
 ### TODO
 
-0) add project to github
+0) add project to github -> DONE
 1) implement rest of API -> DONE
 2) implement all tests
 3) implement error handling and tests
