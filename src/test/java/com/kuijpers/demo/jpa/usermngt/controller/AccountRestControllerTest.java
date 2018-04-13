@@ -32,18 +32,25 @@ public class AccountRestControllerTest {
     @MockBean
     private AccountService accountService;
 
-    // write test cases here
+    // public List<Account> getAllAccounts()
+    // public Account getAccountById(@PathVariable Long id) {
+    // public Account getAccountByUserName(@PathVariable String userName) {
+    // public Account addAccount(@RequestBody Account account) {
+    // public Account updateAccount(@RequestBody Account account) {
+    // public void deleteAccount(@PathVariable Long id) {
+
+
     @Test
-    public void givenAccount_whenGetAllAccount_thenReturnJsonArray() throws Exception {
+    public void whenGetAllAccounts_thenReturnJsonArray() throws Exception {
 
         // arrange
         Account acc = new Account("123", "456");
 
         List<Account> allAccounts = Arrays.asList(acc);
 
-//        given some preconditions (Arrange)
-//        when an action occurs (Act)
-//        then verify the output (Assert)
+        // given some preconditions (Arrange)
+        // when an action occurs (Act)
+        // then verify the output (Assert)
 
         BDDMockito.given(accountService.findAll()).willReturn(allAccounts);
         // or use: Mockito.when(accountService.findAll()).thenReturn(allAccounts);

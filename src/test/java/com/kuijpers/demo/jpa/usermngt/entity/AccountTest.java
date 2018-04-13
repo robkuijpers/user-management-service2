@@ -10,6 +10,9 @@ import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Don't test simple getters and setters.
+ */
 public class AccountTest {
 
     protected static Date date;

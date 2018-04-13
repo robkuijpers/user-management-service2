@@ -36,7 +36,17 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void whenValidUserName_thenAccountShouldBeFound() {
+    public void whenExistingUserName_thenAccountShouldBeFound() {
+
+        String name = "123";
+        Account acc = accountService.findByUserName("123");
+
+        assertThat(acc.getUserName()).isEqualTo(name);
+
+    }
+
+    @Test
+    public void whenNotExistingUserName_thenThrowAccountNotFoundException() {
 
         String name = "123";
         Account acc = accountService.findByUserName("123");

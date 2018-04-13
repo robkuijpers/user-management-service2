@@ -14,6 +14,8 @@ public interface AccountService {
 
     public Account save(final Account account);
 
+    public Boolean confirm(final Long id, final String code);
+
     public void delete(final Account account);
 
 }

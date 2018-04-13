@@ -67,6 +67,19 @@ public class AccountRestController {
 
     /**
      *
+     * @param id
+     * @param code
+     * @return
+     */
+    @PutMapping(value = "/accounts/{id}/confirm/{code}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Boolean confirmAccount(@PathVariable Long id, @PathVariable String code) {
+
+        return accountService.confirm(id, code);
+
+    }
+
+    /**
+     *
      * @param account
      * @return
      */

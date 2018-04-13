@@ -73,6 +73,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
+     * @param id
+     * @param code
+     * @return
+     */
+    public Boolean confirm(final Long id, final String code) {
+
+        return true; // TODO this.accountRepository.save(account);
+
+    }
+
+    /**
      * @param account
      */
     public void delete(final Account account) {

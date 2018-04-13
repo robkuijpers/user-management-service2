@@ -9,6 +9,9 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Don't test simple getters and setters.
+ */
 public class UserTest {
 
     protected static Date date;
