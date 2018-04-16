@@ -2,7 +2,6 @@ package com.kuijpers.demo.jpa.usermngt.repository;
 
 import com.kuijpers.demo.jpa.usermngt.entity.Account;
 import com.kuijpers.demo.jpa.usermngt.entity.Profile;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,32 +172,35 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    @Ignore
-    public void whenFindByNotExistingId_thenThrowAccountNotFoundException() {
+    public void whenAllFindWithEmptyTable_returnEmptyList() {
+
+        // act
+        List<Account> a = accountRepository.findAll();
+
+        // assert
+        assertThat(a.size()).isEqualTo(0);
 
     }
 
     @Test
-    @Ignore
+    public void whenFindByNotExistingId_thenValueInOptionalIsNotPresent() {
+
+        // act
+        Optional<Account> a = accountRepository.findById(new Long(123456789));
+
+        // assert
+        assertThat(a.isPresent()).isFalse();
+
+    }
+
+    @Test
     public void whenFindByNotExistingUserName_thenThrowAccountNotFoundException() {
 
-    }
+        // act
+        Account a = accountRepository.findByUserName("user1");
 
-    @Test
-    @Ignore
-    public void whenAddAccountWithExistingUserName_thenThrowAccountExistsException() {
-
-    }
-
-    @Test
-    @Ignore
-    public void whenUpdateAccountWithNotExistingId_thenThrowAccountNotFoundException() {
-
-    }
-
-    @Test
-    @Ignore
-    public void whenDeleteNotExistingAccount_thenThrowAccountNotFoundException() {
+        // assert
+        assertThat(a).isNull();
 
     }
 

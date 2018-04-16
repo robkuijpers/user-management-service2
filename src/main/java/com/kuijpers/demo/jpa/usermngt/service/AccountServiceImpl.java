@@ -2,13 +2,16 @@ package com.kuijpers.demo.jpa.usermngt.service;
 
 import com.kuijpers.demo.jpa.usermngt.entity.Account;
 import com.kuijpers.demo.jpa.usermngt.repository.AccountRepository;
-import com.kuijpers.demo.jpa.usermngt.repository.ProfileRepository;
-import com.kuijpers.demo.jpa.usermngt.repository.UserRepository;
+import com.kuijpers.demo.jpa.usermngt.service.exception.AccountAlreadyExistsException;
+import com.kuijpers.demo.jpa.usermngt.service.exception.AccountConfirmException;
+import com.kuijpers.demo.jpa.usermngt.service.exception.AccountNotFoundException;
+import com.kuijpers.demo.jpa.usermngt.service.exception.DataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,24 +19,27 @@ import java.util.Optional;
 @Transactional
 public class AccountServiceImpl implements AccountService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
+
     @Autowired
     private AccountRepository accountRepository;
-    private UserRepository userRepository;
-    private ProfileRepository profileRepository;
 
     /**
      * // @param accountRepository
      */
     public AccountServiceImpl() {
-        // this.accountRepository = accountRepository;
     }
 
     /**
      * @return
      */
-    public List<Account> findAll() {
+    public List<Account> findAll() throws DataException {
 
-        return this.accountRepository.findAll();
+        try {
+            return this.accountRepository.findAll();
+        } catch (DataException e) {
+            throw new DataException(e.getMessage());
+        }
 
     }
 
@@ -41,13 +47,17 @@ public class AccountServiceImpl implements AccountService {
      * @param id
      * @return
      */
-    public Account findById(final Long id) {
+    public Account findById(final Long id) throws DataException, AccountNotFoundException {
 
-        Optional<Account> val = this.accountRepository.findById(id);
-        if(val.isPresent()) {
-            return val.get();
-        } else {
-            return null;
+        try {
+            Optional<Account> val = this.accountRepository.findById(id);
+            if (val.isPresent()) {
+                return val.get();
+            } else {
+                throw new AccountNotFoundException("id=" + id);
+            }
+        } catch (org.springframework.dao.DataAccessException e) {
+            throw new DataException(e.getMessage());
         }
 
     }
@@ -56,9 +66,18 @@ public class AccountServiceImpl implements AccountService {
      * @param userName
      * @return
      */
-    public Account findByUserName(final String userName) {
+    public Account findByUserName(final String userName) throws DataException {
 
-        return this.accountRepository.findByUserName(userName);
+        try {
+            Account acc = this.accountRepository.findByUserName(userName);
+            if (acc != null) {
+                return acc;
+            } else {
+                throw new AccountNotFoundException("userName=" + userName);
+            }
+        } catch (org.springframework.dao.DataAccessException e) {
+            throw new DataException(e.getMessage());
+        }
 
     }
 
@@ -66,9 +85,26 @@ public class AccountServiceImpl implements AccountService {
      * @param account
      * @return
      */
-    public Account save(final Account account) {
+    public Account save(final Account account) throws AccountNotFoundException, AccountAlreadyExistsException, DataException {
 
-        return this.accountRepository.save(account);
+        try {
+            if (account.getId() != null) {
+                this.accountRepository.findById(account.getId());
+            }
+
+            if (account.getUserName() != null) {
+                if (this.findByUserName(account.getUserName()) == null) {
+                    throw new AccountAlreadyExistsException("userName=" + account.getUserName());
+                }
+            }
+
+            return this.accountRepository.save(account);
+
+        } catch (AccountNotFoundException e) {
+            throw e;
+        } catch (org.springframework.dao.DataAccessException e) {
+            throw new DataException(e.getMessage());
+        }
 
     }
 
@@ -77,18 +113,42 @@ public class AccountServiceImpl implements AccountService {
      * @param code
      * @return
      */
-    public Boolean confirm(final Long id, final String code) {
+    public Boolean confirm(final Long id, final String code) throws AccountNotFoundException, AccountConfirmException, DataException {
 
-        return true; // TODO this.accountRepository.save(account);
+        try {
+
+            Account acc = this.findById(id);
+
+            if (acc.getConfirmed() == true) {
+                throw new AccountConfirmException("already confirmed");
+            }
+
+            if (acc.getConfirmCode().equals(code)) {
+                this.save(acc);
+                return true;
+            } else {
+                throw new AccountConfirmException("invalid conform code");
+            }
+
+        } catch (AccountNotFoundException e) {
+            throw e;
+        } catch (org.springframework.dao.DataAccessException e) {
+            throw new DataException(e.getMessage());
+        }
 
     }
 
     /**
      * @param account
      */
-    public void delete(final Account account) {
+    public void delete(final Account account) throws AccountNotFoundException, DataException {
 
-        this.accountRepository.delete(account);
+        try {
+            this.findById(account.getId());
+            this.accountRepository.delete(account);
+        } catch (org.springframework.dao.DataAccessException e) {
+            throw new DataException(e.getMessage());
+        }
 
     }
 
