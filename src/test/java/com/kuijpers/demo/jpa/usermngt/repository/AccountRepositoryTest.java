@@ -194,7 +194,7 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    public void whenFindByNotExistingUserName_thenThrowAccountNotFoundException() {
+    public void whenFindByNotExistingUserName_thenReturnNull() {
 
         // act
         Account a = accountRepository.findByUserName("user1");
